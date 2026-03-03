@@ -1,0 +1,1577 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>商品一覧 | Mawal</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#ffffff;
+      --text:#222222;
+      --muted:#666666;
+      --line:#e8e8e8;
+
+      --beige:#f4efe8;
+      --footer:#1b1815;
+      --brown:#6b4f3b;
+      --brown2:#5a4030;
+
+      --shadow: 0 8px 24px rgba(0,0,0,.08);
+      --radius:16px;
+      --max:1120px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+      color:var(--text);
+      background:var(--bg);
+      line-height:1.6;
+    }
+    a{ color:inherit; text-decoration:none; }
+    img{ max-width:100%; display:block; }
+    button, input, select{ font:inherit; }
+    .container{
+      width:min(var(--max), calc(100% - 48px));
+      margin-inline:auto;
+    }
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:50;
+      background:rgba(255,255,255,.8);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid rgba(0,0,0,.06);
+    }
+    .header-inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 0;
+      gap:14px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      font-weight:600;
+      letter-spacing:0.08em;
+      white-space:nowrap;
+    }
+    .brand-text{
+      font-family:"Playfair Display", serif;
+      font-size:22px;
+      color:var(--brown);
+      text-transform:capitalize;
+    }
+    .brand:hover .brand-text{ opacity:.85; }
+
+    nav{
+      display:flex;
+      gap:16px;
+      align-items:center;
+      font-size:14px;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    nav a{ padding:8px 10px; border-radius:10px; }
+    nav a:hover{ background:rgba(0,0,0,.04); color:var(--text); }
+    .nav-cta{
+      color:#fff;
+      background:var(--brown);
+    }
+    .nav-cta:hover{ background:var(--brown2); color:#fff; }
+
+    .cart-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:10px;
+    }
+    .cart-pill:hover{ background:rgba(0,0,0,.04); color:var(--text); }
+    .cart-badge{
+      min-width:22px;
+      height:22px;
+      padding:0 7px;
+      border-radius:999px;
+      display:grid;
+      place-items:center;
+      font-size:12px;
+      color:#fff;
+      background:var(--brown);
+      line-height:1;
+    }
+
+    main{ padding:26px 0 70px; }
+    .crumbs{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+      font-size:12px;
+      color:var(--muted);
+      margin:6px 0 14px;
+    }
+    .crumbs a{ color:var(--muted); }
+    .crumbs a:hover{ color:var(--text); }
+    .crumbs .sep{ opacity:.6; }
+
+    .page-title{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:12px;
+      margin-bottom:14px;
+    }
+    .page-title h1{
+      font-size:30px;
+      margin:0;
+      letter-spacing:.01em;
+      font-family:"Playfair Display", serif;
+      font-weight:600;
+      color:var(--brown);
+    }
+    .page-title p{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .toolbar{
+      position: static;
+      top: auto;
+      z-index: auto;
+      background: transparent;
+      backdrop-filter: none;
+      border-top:1px solid rgba(0,0,0,.04);
+      border-bottom:1px solid rgba(0,0,0,.08);
+    }
+    .toolbar-inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:12px 0;
+    }
+    .left-tools{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex: 1 1 auto;
+      min-width:0;
+    }
+    .search{
+      flex: 1 1 auto;
+      min-width: 240px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border:1px solid rgba(0,0,0,.12);
+      border-radius:14px;
+      background:#fff;
+    }
+    .search svg{ flex:0 0 auto; opacity:.65; }
+    .search input{
+      border:none;
+      outline:none;
+      width:100%;
+      background:transparent;
+      font-size:14px;
+    }
+    .right-tools{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex: 0 0 auto;
+    }
+    .select{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border:1px solid rgba(0,0,0,.12);
+      border-radius:14px;
+      background:#fff;
+      font-size:14px;
+      color:var(--text);
+      white-space:nowrap;
+    }
+    .select select{
+      border:none;
+      outline:none;
+      background:transparent;
+      padding-right:18px;
+      cursor:pointer;
+    }
+    .btn{
+      border:1px solid rgba(0,0,0,.12);
+      background:#fff;
+      color:var(--text);
+      border-radius:14px;
+      padding:10px 12px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-size:14px;
+      white-space:nowrap;
+    }
+    .btn:hover{ border-color: rgba(0,0,0,.20); box-shadow: 0 6px 18px rgba(0,0,0,.06); }
+    .btn.primary{
+      background:var(--brown);
+      border-color:var(--brown);
+      color:#fff;
+    }
+    .btn.primary:hover{ background:var(--brown2); border-color:var(--brown2); }
+    .btn:disabled{ opacity:.55; cursor:not-allowed; box-shadow:none; }
+    .count{
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      gap:22px;
+      padding-top:18px;
+      align-items:start;
+    }
+
+    .filters{
+      border:1px solid rgba(0,0,0,.10);
+      border-radius:0;
+      padding:14px;
+      background:var(--beige);
+      position:sticky;
+      top:132px;
+    }
+    .filters h2{
+      font-size:15px;
+      margin:0 0 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      color:#2a2a2a;
+    }
+    .filters .reset{
+      font-size:12px;
+      color:var(--muted);
+      cursor:pointer;
+      border:none;
+      background:transparent;
+      padding:6px 8px;
+      border-radius:10px;
+    }
+    .filters .reset:hover{ background:rgba(0,0,0,.04); color:var(--text); }
+
+    .filter-group{
+      border-top:1px solid rgba(0,0,0,.08);
+      padding-top:12px;
+      margin-top:12px;
+    }
+    .filter-group:first-of-type{
+      border-top:none;
+      padding-top:0;
+      margin-top:0;
+    }
+    .filter-group .label{
+      font-size:12px;
+      color:var(--muted);
+      margin:0 0 8px;
+      letter-spacing:.02em;
+    }
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .chip{
+      border:1px solid rgba(0,0,0,.12);
+      background:#fff;
+      padding:7px 10px;
+      border-radius:999px;
+      cursor:pointer;
+      font-size:13px;
+      user-select:none;
+    }
+    .chip[aria-pressed="true"]{
+      border-color: rgba(107,79,59,.55);
+      background: rgba(107,79,59,.10);
+      color: var(--text);
+    }
+
+    .range{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .range input{
+      width:100%;
+      padding:10px 12px;
+      border:1px solid rgba(0,0,0,.12);
+      border-radius:14px;
+      outline:none;
+      font-size:14px;
+      background:#fff;
+    }
+    .range input:focus{
+      border-color: rgba(107,79,59,.45);
+      box-shadow: 0 0 0 4px rgba(107,79,59,.10);
+    }
+
+    .checklist{
+      display:grid;
+      gap:8px;
+      font-size:14px;
+    }
+    .check{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .check input{ width:16px; height:16px; }
+
+    .results-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:10px;
+    }
+    .results-top .result-text{
+      color:var(--muted);
+      font-size:13px;
+    }
+    .active-filters{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      justify-content:flex-end;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border:1px solid rgba(0,0,0,.12);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      background:#fff;
+      color:var(--text);
+      cursor:default;
+    }
+    .pill button{
+      border:none;
+      background:transparent;
+      cursor:pointer;
+      padding:0;
+      line-height:0;
+      opacity:.65;
+    }
+    .pill button:hover{ opacity:1; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:18px;
+    }
+
+    .card{
+      border:1px solid rgba(0,0,0,.08);
+      border-radius:0;
+      overflow:hidden;
+      background:var(--beige);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      display:flex;
+      flex-direction:column;
+      min-height: 100%;
+    }
+    .card:hover{
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+      border-color: rgba(0,0,0,.18);
+    }
+    .media{
+      aspect-ratio: 1 / 1;
+      background:#ddd;
+      position:relative;
+      overflow:hidden;
+    }
+    .media img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .badge{
+      position:absolute;
+      left:12px; top:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      background:rgba(255,255,255,.92);
+      border:1px solid rgba(0,0,0,.08);
+      z-index:2;
+    }
+
+    .fav{
+      position:absolute;
+      right:10px; top:10px;
+      width:36px; height:36px;
+      border-radius:14px;
+      border:1px solid rgba(0,0,0,.10);
+      background:rgba(255,255,255,.92);
+      display:grid; place-items:center;
+      cursor:pointer;
+      z-index:2;
+      color: var(--brown);
+    }
+    .fav:hover{ border-color: rgba(0,0,0,.22); }
+    .fav[aria-pressed="true"]{
+      background: rgba(107,79,59,.10);
+      border-color: rgba(107,79,59,.35);
+    }
+    .fav svg path{ fill:none; }
+    .fav[aria-pressed="true"] svg path{ fill: currentColor; }
+
+    .body{
+      padding:14px 14px 16px;
+      background:rgba(255,255,255,.35);
+      backdrop-filter: blur(2px);
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      flex: 1 1 auto;
+    }
+    .name{
+      margin:0;
+      font-size:15px;
+      font-weight:600;
+      line-height:1.3;
+      display:-webkit-box;
+      -webkit-box-orient: vertical;
+      overflow:hidden;
+      min-height: 2.6em;
+    }
+    .desc{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+      display:-webkit-box;
+      -webkit-box-orient: vertical;
+      overflow:hidden;
+    }
+    .row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-top:auto;
+      padding-top:4px;
+    }
+    .price{
+      margin:0;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+    .mini{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .mini span{
+      font-size:11px;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid rgba(0,0,0,.10);
+      color:var(--muted);
+      background:rgba(255,255,255,.55);
+    }
+
+    .card-actions{
+      display:flex;
+      gap:10px;
+      margin-top:8px;
+    }
+    .btn.small{
+      padding:10px 12px;
+      border-radius:14px;
+      font-size:13px;
+      flex:1;
+      justify-content:center;
+    }
+
+    .bottom-bar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding-top:22px;
+    }
+    .pager{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .pagebtn{
+      width:40px;height:40px;
+      border-radius:14px;
+      border:1px solid rgba(0,0,0,.12);
+      background:#fff;
+      cursor:pointer;
+    }
+    .pagebtn:hover{ border-color: rgba(0,0,0,.22); }
+    .pagebtn[aria-current="page"]{
+      border-color: rgba(107,79,59,.55);
+      background: rgba(107,79,59,.10);
+    }
+
+    .empty{
+      border:1px dashed rgba(0,0,0,.20);
+      border-radius:0;
+      padding:18px;
+      color:var(--muted);
+      display:none;
+      background: rgba(0,0,0,.02);
+    }
+    .empty strong{ color:var(--text); }
+
+    footer{
+      background:var(--footer);
+      color:#fff;
+      padding:44px 0;
+      margin-top:56px;
+    }
+    .footer-grid{
+      display:grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap:26px;
+      align-items:start;
+    }
+    .footer-title{
+      margin:0 0 10px;
+      font-weight:700;
+      letter-spacing:.02em;
+    }
+    .footer-links{
+      display:grid;
+      gap:10px;
+      font-size:14px;
+      color:rgba(255,255,255,.78);
+    }
+    .footer-links a:hover{ color:#fff; }
+    .footer-bottom{
+      margin-top:26px;
+      padding-top:18px;
+      border-top:1px solid rgba(255,255,255,.12);
+      color:rgba(255,255,255,.6);
+      font-size:12px;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .sns{
+      display:flex; gap:10px;
+      margin-top:14px;
+    }
+    .sns a{
+      width:34px;height:34px;border-radius:12px;
+      display:grid;place-items:center;
+      border:1px solid rgba(255,255,255,.16);
+      color:rgba(255,255,255,.9);
+    }
+    .sns a:hover{ border-color:rgba(255,255,255,.35); }
+
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.45);
+      display:none;
+      z-index:60;
+    }
+    .drawer{
+      position:fixed;
+      inset:0 0 0 auto;
+      width:min(420px, 92vw);
+      background:#fff;
+      transform: translateX(105%);
+      transition: transform .22s ease;
+      z-index:70;
+      display:flex;
+      flex-direction:column;
+      border-left:1px solid rgba(0,0,0,.08);
+    }
+    .drawer.open{ transform: translateX(0); }
+    .overlay.open{ display:block; }
+    .drawer-head{
+      padding:14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      border-bottom:1px solid rgba(0,0,0,.08);
+      background:rgba(255,255,255,.92);
+      backdrop-filter: blur(8px);
+    }
+    .drawer-title{
+      font-weight:800;
+      letter-spacing:.02em;
+    }
+    .drawer-body{
+      padding:14px 16px 16px;
+      overflow:auto;
+      background:var(--beige);
+    }
+    .drawer-foot{
+      padding:12px 16px;
+      border-top:1px solid rgba(0,0,0,.08);
+      display:flex;
+      gap:10px;
+      background:#fff;
+    }
+    .drawer-foot .btn{ flex:1; justify-content:center; }
+
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:24px;
+      transform:translateX(-50%);
+      padding:12px 14px;
+      border-radius:14px;
+      background:rgba(17,17,17,.92);
+      color:#fff;
+      font-size:14px;
+      z-index:200;
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: 0 12px 40px rgba(0,0,0,.28);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .22s ease;
+    }
+    .toast.show{ opacity:1; }
+
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: repeat(2, 1fr); }
+      .layout{ grid-template-columns: 260px 1fr; }
+    }
+    @media (max-width: 820px){
+      .layout{ grid-template-columns: 1fr; }
+      .filters{ display:none; }
+      .btn.filter-open{ display:inline-flex; }
+    }
+    @media (max-width: 560px){
+      .container{ width:min(var(--max), calc(100% - 32px)); }
+      nav a{ display:none; }
+      nav a.nav-cta{ display:inline-flex; }
+      .page-title{ flex-direction:column; align-items:flex-start; }
+      .page-title h1{ font-size:26px; }
+      .search{ min-width: 0; }
+      .grid{ grid-template-columns: 1fr; }
+      .toolbar-inner{ flex-direction:column; align-items:stretch; }
+      .left-tools{ width:100%; }
+      .right-tools{ width:100%; justify-content:space-between; }
+      .footer-grid{ grid-template-columns: 1fr; }
+    }
+    .btn.filter-open{ display:none; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <div class="header-inner">
+        <a class="brand" href="index.html" aria-label="Mawal トップへ">
+          <span class="brand-text">Mawal</span>
+        </a>
+
+        <nav aria-label="Primary">
+          <a href="index.html#recommended">おすすめ</a>
+          <a href="products.html" aria-current="page">商品</a>
+          <a href="favorites.html">お気に入り</a>
+          <a href="index.html#about">概要</a>
+
+          <a class="cart-pill" href="cart.html" aria-label="カートへ">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M6 7h15l-1.5 9h-12L6 7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M6 7 5 4H2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="9" cy="20" r="1.6" fill="currentColor"/>
+              <circle cx="18" cy="20" r="1.6" fill="currentColor"/>
+            </svg>
+            <span>(</span><span id="cartCount" class="cart-badge">0</span><span>)</span>
+          </a>
+
+          <a class="nav-cta" href="cart.html">カート</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="crumbs" aria-label="Breadcrumb">
+        <a href="index.html">Home</a>
+        <span class="sep">/</span>
+        <span aria-current="page">商品</span>
+      </div>
+
+      <div class="page-title">
+        <div>
+          <h1>merchandise</h1>
+          <p>用途・特徴で絞り込んで、あなたに合う一品を探せます。</p>
+        </div>
+        <div class="count" id="totalCountText">—</div>
+      </div>
+    </div>
+
+    <div class="toolbar" role="region" aria-label="Search and sort">
+      <div class="container">
+        <div class="toolbar-inner">
+          <div class="left-tools">
+            <div class="search" role="search">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/>
+                <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <input id="searchInput" type="search" placeholder="商品名・キーワードで検索" autocomplete="off" />
+            </div>
+
+            <button class="btn filter-open" id="openFilterBtn" type="button" aria-haspopup="dialog" aria-controls="filterDrawer">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              絞り込み
+            </button>
+          </div>
+
+          <div class="right-tools">
+            <div class="select" aria-label="Sort">
+              <span style="color:var(--muted);font-size:12px;">並び替え</span>
+              <select id="sortSelect">
+                <option value="recommended">おすすめ</option>
+                <option value="new">新着</option>
+                <option value="price_asc">価格：安い順</option>
+                <option value="price_desc">価格：高い順</option>
+              </select>
+            </div>
+            <div class="count" id="resultCountText">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="layout">
+        <aside class="filters" aria-label="Filters">
+          <h2>
+            絞り込み
+            <button class="reset" id="resetBtnDesktop" type="button">リセット</button>
+          </h2>
+
+          <div class="filter-group">
+            <div class="label">種類</div>
+            <div class="chips" id="chipsCategory"></div>
+          </div>
+
+          <div class="filter-group">
+            <div class="label">特徴</div>
+            <div class="chips" id="chipsFeature"></div>
+          </div>
+
+          <div class="filter-group">
+            <div class="label">価格帯（円）</div>
+            <div class="range">
+              <input id="minPrice" inputmode="numeric" placeholder="最小" />
+              <input id="maxPrice" inputmode="numeric" placeholder="最大" />
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <div class="label">在庫</div>
+            <div class="checklist">
+              <label class="check">
+                <input id="inStockOnly" type="checkbox" />
+                <span>在庫ありのみ</span>
+              </label>
+            </div>
+          </div>
+        </aside>
+
+        <section aria-label="Product list">
+          <div class="results-top">
+            <div class="result-text" id="rangeText">—</div>
+            <div class="active-filters" id="activeFilters"></div>
+          </div>
+
+          <div class="empty" id="emptyState">
+            <strong>該当する商品が見つかりませんでした。</strong><br>
+            条件をリセットして、もう一度お試しください。
+            <div style="margin-top:12px;">
+              <button class="btn" type="button" id="resetBtnEmpty">条件をリセット</button>
+            </div>
+          </div>
+
+          <div class="grid" id="productGrid" aria-live="polite"></div>
+
+          <div class="bottom-bar">
+            <button class="btn primary" id="loadMoreBtn" type="button">もっと見る</button>
+            <div class="pager" id="pager" aria-label="Pagination"></div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <div class="overlay" id="overlay" aria-hidden="true"></div>
+  <aside class="drawer" id="filterDrawer" role="dialog" aria-modal="true" aria-label="絞り込み">
+    <div class="drawer-head">
+      <div class="drawer-title">絞り込み</div>
+      <button class="btn" id="closeFilterBtn" type="button">閉じる</button>
+    </div>
+    <div class="drawer-body">
+      <div class="filter-group" style="border-top:none;margin-top:0;padding-top:0;">
+        <div class="label">種類</div>
+        <div class="chips" id="chipsCategoryMobile"></div>
+      </div>
+
+      <div class="filter-group">
+        <div class="label">特徴</div>
+        <div class="chips" id="chipsFeatureMobile"></div>
+      </div>
+
+      <div class="filter-group">
+        <div class="label">価格帯（円）</div>
+        <div class="range">
+          <input id="minPriceMobile" inputmode="numeric" placeholder="最小" />
+          <input id="maxPriceMobile" inputmode="numeric" placeholder="最大" />
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <div class="label">在庫</div>
+        <div class="checklist">
+          <label class="check">
+            <input id="inStockOnlyMobile" type="checkbox" />
+            <span>在庫ありのみ</span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="drawer-foot">
+      <button class="btn" id="resetBtnMobile" type="button">リセット</button>
+      <button class="btn primary" id="applyBtnMobile" type="button">適用</button>
+    </div>
+  </aside>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-title">Mawal</div>
+          <div style="color:rgba(255,255,255,.72);font-size:14px;max-width:38ch;">
+            素材の価値を、日常へ。製品とリサイクルをつなぐEC体験を目指します。
+          </div>
+          <div class="sns">
+            <a href="#" aria-label="X">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </a>
+            <a href="#" aria-label="Instagram">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="6" y="6" width="12" height="12" rx="3" stroke="currentColor" stroke-width="2"/>
+                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                <circle cx="16.5" cy="7.5" r="1" fill="currentColor"/>
+              </svg>
+            </a>
+            <a href="#" aria-label="YouTube">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M21 12s0-3.3-.4-4.7c-.2-.8-.9-1.5-1.7-1.7C17.5 5.2 12 5.2 12 5.2s-5.5 0-6.9.4c-.8.2-1.5.9-1.7 1.7C3 8.7 3 12 3 12s0 3.3.4 4.7c.2.8.9 1.5 1.7 1.7 1.4.4 6.9.4 6.9.4s5.5 0 6.9-.4c.8.2 1.5.9 1.7 1.7.4-1.4.4-4.7.4-4.7Z" stroke="currentColor" stroke-width="2"/>
+                <path d="M10 15V9l5 3-5 3Z" fill="currentColor"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <div class="footer-title">メニュー</div>
+          <div class="footer-links">
+            <a href="index.html#recommended">おすすめ商品</a>
+            <a href="products.html" aria-current="page">商品一覧</a>
+            <a href="favorites.html">お気に入り</a>
+            <a href="index.html#about">商品概要</a>
+            <a href="#">お問い合わせ</a>
+          </div>
+        </div>
+
+        <div>
+          <div class="footer-title">ガイド</div>
+          <div class="footer-links">
+            <a href="#">ご利用ガイド</a>
+            <a href="#">会社情報</a>
+            <a href="#">利用規約</a>
+            <a href="#">プライバシーポリシー</a>
+            <a href="#">特定商取引法に基づく表記</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© <span id="year"></span> Mawal Inc.</div>
+        <div style="color:rgba(255,255,255,.55);">Product Listing / Dummy Data</div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <script>
+    /* =========================
+       Products + Cart + Favorites (localStorage)
+    ========================== */
+
+    // --- Utils ---
+    const yen = (n) => "¥" + n.toLocaleString("ja-JP");
+    const toNum = (v) => {
+      const s = String(v ?? "").replace(/[^\d]/g, "");
+      return s ? Number(s) : null;
+    };
+
+    // ★ 最終提案価格まとめ（固定）
+    const PRICE_BY_IMAGE = {
+      "images/Image_fx (1).png": 3800, // コップ
+      "images/Image_fx (2).png": 2200, // フォーク
+      "images/Image_fx (3).png": 2200, // 箸
+      "images/Image_fx (4).png": 6800, // おぼん
+      "images/Image_fx (5).png": 1800, // 蜜蝋
+      "images/Image_fx.png":     4800, // お椀
+      "images/Image_fx (7).png": 3800, // プレート（小）
+      "images/Image_fx(8).png":  2200, // スプーン
+    };
+
+    const PRODUCT_IMAGES = [
+      "images/Image_fx (1).png", // コップ
+      "images/Image_fx (2).png", // フォーク
+      "images/Image_fx (3).png", // 箸
+      "images/Image_fx (4).png", // おぼん
+      "images/Image_fx (5).png", // 蜜蝋
+      "images/Image_fx.png",     // お椀
+      "images/Image_fx (7).png", // プレート
+      "images/Image_fx(8).png",  // スプーン
+    ];
+
+    // 画像ファイル名 → 種類/商品名（指定どおりに対応）
+    const IMAGE_TO_INFO = {
+      "images/Image_fx (1).png": { type: "コップ",   name: "香りをたのしむ 木のカップ" },
+      "images/Image_fx (2).png": { type: "フォーク", name: "口あたりやさしい 木のフォーク" },
+      "images/Image_fx (3).png": { type: "箸",       name: "すっとつかめる 八角箸" },
+      "images/Image_fx (4).png": { type: "おぼん",   name: "食卓になじむ 木のおぼん" },
+      "images/Image_fx (5).png": { type: "蜜蝋",     name: "つや出し みつろうジャム" },
+      "images/Image_fx.png":     { type: "お椀",     name: "木肌まろやか お椀" },
+      "images/Image_fx (7).png": { type: "プレート", name: "森のうるしコート プレート" },
+      "images/Image_fx(8).png":  { type: "スプーン", name: "森の手になじむ 木のスプーン" },
+    };
+
+    function getInfoByImg(img){
+      return IMAGE_TO_INFO[img] ?? { type: "食器", name: "木のうつわ" };
+    }
+
+    function getPriceByImg(img){
+      // 未定義のときは無難な価格（中価格帯）にフォールバック
+      return PRICE_BY_IMAGE[img] ?? 3800;
+    }
+
+    // --- localStorage cart ---
+    const CART_KEY = "mawal_cart_v1";
+
+    function readCart(){
+      try{
+        const raw = localStorage.getItem(CART_KEY);
+        const arr = raw ? JSON.parse(raw) : [];
+        return Array.isArray(arr) ? arr : [];
+      }catch{
+        return [];
+      }
+    }
+    function writeCart(cart){
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    }
+    function cartItemCount(cart){
+      return cart.reduce((sum, it) => sum + (Number(it.qty) || 0), 0);
+    }
+    function updateCartBadge(){
+      const count = cartItemCount(readCart());
+      const badge = document.getElementById("cartCount");
+      if (badge) badge.textContent = String(count);
+    }
+
+    // --- Favorites (localStorage) ---
+    const FAV_KEY = "mawal_favorites_v1";
+
+    function readFavs(){
+      try{
+        const raw = localStorage.getItem(FAV_KEY);
+        const arr = raw ? JSON.parse(raw) : [];
+        const ids = Array.isArray(arr) ? arr.map(Number).filter(n => Number.isFinite(n)) : [];
+        return new Set(ids);
+      }catch{
+        return new Set();
+      }
+    }
+    function writeFavs(favSet){
+      localStorage.setItem(FAV_KEY, JSON.stringify([...favSet]));
+    }
+
+    function toast(msg){
+      const t = document.getElementById("toast");
+      if (!t) return;
+      t.textContent = msg;
+      t.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => t.classList.remove("show"), 1400);
+    }
+
+    function addToCart(product){
+      const cart = readCart();
+      const existing = cart.find(x => x.id === product.id);
+      if (existing){
+        existing.qty = Math.min(99, (Number(existing.qty) || 0) + 1);
+      } else {
+        cart.push({
+          id: product.id,
+          name: product.name,
+          variant: `種類: ${product.category}`,
+          unitPrice: product.price,
+          qty: 1,
+          inStock: product.inStock,
+          img: product.img
+        });
+      }
+      writeCart(cart);
+      updateCartBadge();
+      toast("カートに追加しました");
+    }
+
+    // --- Data model ---
+    const CATEGORIES = ["コップ","フォーク","箸","おぼん","蜜蝋","お椀","プレート","スプーン"];
+    const FEATURES = ["口あたりやさしい", "軽い", "手になじむ", "お手入れ簡単"];
+
+    // ★ 価格を画像ごとに固定して生成
+    const products = Array.from({ length: 42 }, (_, i) => {
+      const id = i + 1;
+
+      const img = PRODUCT_IMAGES[i % PRODUCT_IMAGES.length];
+      const info = getInfoByImg(img);
+
+      const category = info.type;
+      const createdAt = Date.now() - (i * 86400000 * 2);
+      const price = getPriceByImg(img);
+      const inStock = (i % 7) !== 0;
+
+      const feats = FEATURES
+        .filter((_, idx) => ((i + idx) % 2 === 0))
+        .slice(0, (i % 3) + 1);
+
+      const badge = (i % 9 === 0) ? "NEW" : (i % 11 === 0) ? "人気" : "";
+
+      const name = `${info.name} ${id}`;
+      const desc = `種類：${category}。天然木のやさしい手ざわり。${feats.join("・")} の特長。毎日の食卓になじむ仕上げです。`;
+
+      return { id, name, category, features: feats, price, inStock, createdAt, badge, desc, img };
+    });
+
+    // --- State ---
+    const state = {
+      q: "",
+      sort: "recommended",
+      category: new Set(),
+      feature: new Set(),
+      minPrice: null,
+      maxPrice: null,
+      inStockOnly: false,
+      page: 1,
+      perPage: 12,
+      useLoadMore: true,
+      favorites: readFavs()
+    };
+
+    // --- Elements ---
+    const el = {
+      year: document.getElementById("year"),
+      totalCountText: document.getElementById("totalCountText"),
+      resultCountText: document.getElementById("resultCountText"),
+      rangeText: document.getElementById("rangeText"),
+      activeFilters: document.getElementById("activeFilters"),
+      grid: document.getElementById("productGrid"),
+      empty: document.getElementById("emptyState"),
+      pager: document.getElementById("pager"),
+      loadMore: document.getElementById("loadMoreBtn"),
+
+      search: document.getElementById("searchInput"),
+      sort: document.getElementById("sortSelect"),
+
+      chipsCategory: document.getElementById("chipsCategory"),
+      chipsFeature: document.getElementById("chipsFeature"),
+      minPrice: document.getElementById("minPrice"),
+      maxPrice: document.getElementById("maxPrice"),
+      inStockOnly: document.getElementById("inStockOnly"),
+
+      openFilterBtn: document.getElementById("openFilterBtn"),
+      closeFilterBtn: document.getElementById("closeFilterBtn"),
+      overlay: document.getElementById("overlay"),
+      drawer: document.getElementById("filterDrawer"),
+      chipsCategoryMobile: document.getElementById("chipsCategoryMobile"),
+      chipsFeatureMobile: document.getElementById("chipsFeatureMobile"),
+      minPriceMobile: document.getElementById("minPriceMobile"),
+      maxPriceMobile: document.getElementById("maxPriceMobile"),
+      inStockOnlyMobile: document.getElementById("inStockOnlyMobile"),
+      resetBtnDesktop: document.getElementById("resetBtnDesktop"),
+      resetBtnMobile: document.getElementById("resetBtnMobile"),
+      applyBtnMobile: document.getElementById("applyBtnMobile"),
+      resetBtnEmpty: document.getElementById("resetBtnEmpty"),
+    };
+
+    el.year.textContent = new Date().getFullYear();
+
+    function renderChips(container, items, selectedSet){
+      container.innerHTML = "";
+      items.forEach(value => {
+        const b = document.createElement("button");
+        b.className = "chip";
+        b.type = "button";
+        b.textContent = value;
+        b.setAttribute("aria-pressed", selectedSet.has(value) ? "true" : "false");
+        container.appendChild(b);
+      });
+    }
+    function syncChipPressed(container, selectedSet){
+      [...container.querySelectorAll(".chip")].forEach(btn => {
+        btn.setAttribute("aria-pressed", selectedSet.has(btn.textContent) ? "true" : "false");
+      });
+    }
+    function toggleSet(set, value){
+      if (set.has(value)) set.delete(value);
+      else set.add(value);
+    }
+
+    function applyFilters(list){
+      const q = state.q.trim().toLowerCase();
+      return list.filter(p => {
+        if (q) {
+          const hay = (p.name + " " + p.desc + " " + p.category + " " + p.features.join(" ")).toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        if (state.category.size && !state.category.has(p.category)) return false;
+        if (state.feature.size) {
+          const ok = [...state.feature].every(f => p.features.includes(f));
+          if (!ok) return false;
+        }
+        if (state.inStockOnly && !p.inStock) return false;
+        if (state.minPrice !== null && p.price < state.minPrice) return false;
+        if (state.maxPrice !== null && p.price > state.maxPrice) return false;
+        return true;
+      });
+    }
+    function applySort(list){
+      const copy = [...list];
+      switch(state.sort){
+        case "new": copy.sort((a,b) => b.createdAt - a.createdAt); break;
+        case "price_asc": copy.sort((a,b) => a.price - b.price); break;
+        case "price_desc": copy.sort((a,b) => b.price - a.price); break;
+        default:
+          copy.sort((a,b) => {
+            const score = (p) => (p.badge ? 1 : 0) * 1000000000 + p.createdAt;
+            return score(b) - score(a);
+          });
+      }
+      return copy;
+    }
+
+    function getPaged(list){
+      const total = list.length;
+      const pages = Math.max(1, Math.ceil(total / state.perPage));
+      const page = Math.min(state.page, pages);
+      const end = state.useLoadMore ? page * state.perPage : page * state.perPage;
+      const start = state.useLoadMore ? 0 : (page - 1) * state.perPage;
+      return {
+        total, pages, page,
+        slice: list.slice(start, end),
+        rangeStart: total === 0 ? 0 : start + 1,
+        rangeEnd: Math.min(end, total)
+      };
+    }
+
+    function isFav(id){ return state.favorites.has(Number(id)); }
+    function toggleFav(id){
+      const n = Number(id);
+      if (!Number.isFinite(n)) return;
+      if (state.favorites.has(n)) { state.favorites.delete(n); toast("お気に入りから削除しました"); }
+      else { state.favorites.add(n); toast("お気に入りに追加しました"); }
+      writeFavs(state.favorites);
+    }
+
+    function renderGrid(items){
+      el.grid.innerHTML = items.map(p => {
+        const pressed = isFav(p.id) ? "true" : "false";
+        return `
+          <article class="card">
+            <div class="media">
+              <a href="product_01.html" aria-label="${p.name}の詳細へ">
+                <img src="${p.img}" alt="${p.name}">
+              </a>
+
+              ${p.badge ? `<div class="badge">${p.badge}</div>` : ""}
+
+              <button class="fav" type="button"
+                data-fav-id="${p.id}"
+                aria-pressed="${pressed}"
+                aria-label="${isFav(p.id) ? "お気に入り解除" : "お気に入りに追加"}">
+
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 21s-7-4.6-9.5-8.6C.8 9.5 2.2 6.6 5.2 5.7c1.8-.6 3.7.1 4.8 1.4 1.1-1.3 3-2 4.8-1.4 3 .9 4.4 3.8 2.7 6.7C19 16.4 12 21 12 21Z"
+                    stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                </svg>
+
+              </button>
+            </div>
+
+            <div class="body">
+              <h3 class="name">${p.name}</h3>
+              <p class="desc">${p.desc}</p>
+
+              <div class="row">
+                <p class="price">${yen(p.price)}</p>
+                <div class="mini">
+                  <span>${p.category}</span>
+                  <span>${p.inStock ? "在庫あり" : "在庫なし"}</span>
+                </div>
+              </div>
+
+              <div class="card-actions">
+                <button class="btn primary small" type="button"
+                  data-add-id="${p.id}" ${p.inStock ? "" : "disabled"}
+                  aria-label="${p.name}をカートに入れる">
+                  カートに入れる
+                </button>
+                <a class="btn small" href="cart.html" role="button">カートへ</a>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderActiveFilters(){
+      const pills = [];
+      [...state.category].forEach(v => pills.push({ key:"category", label:`種類: ${v}`, value:v }));
+      [...state.feature].forEach(v => pills.push({ key:"feature", label:`特徴: ${v}`, value:v }));
+      if (state.minPrice !== null) pills.push({ key:"minPrice", label:`最小: ${yen(state.minPrice)}`, value: state.minPrice });
+      if (state.maxPrice !== null) pills.push({ key:"maxPrice", label:`最大: ${yen(state.maxPrice)}`, value: state.maxPrice });
+      if (state.inStockOnly) pills.push({ key:"stock", label:`在庫ありのみ`, value:true });
+      if (state.q.trim()) pills.push({ key:"q", label:`検索: ${state.q.trim()}`, value: state.q.trim() });
+
+      el.activeFilters.innerHTML = pills.map(p => `
+        <span class="pill">
+          ${p.label}
+          <button type="button" aria-label="削除" data-key="${p.key}" data-value="${String(p.value)}">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </span>
+      `).join("");
+
+      el.activeFilters.querySelectorAll("button").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const key = btn.dataset.key;
+          const value = btn.dataset.value;
+
+          if (key === "category") state.category.delete(value);
+          if (key === "feature") state.feature.delete(value);
+          if (key === "minPrice") state.minPrice = null;
+          if (key === "maxPrice") state.maxPrice = null;
+          if (key === "stock") state.inStockOnly = false;
+          if (key === "q") { state.q = ""; el.search.value = ""; }
+
+          state.page = 1;
+          syncAllUIFromState();
+          render();
+        });
+      });
+    }
+
+    function renderPager(pages, current){
+      const clamp = (n) => Math.max(1, Math.min(pages, n));
+      const windowSize = 5;
+      let start = clamp(current - 2);
+      let end = clamp(current + 2);
+
+      if (end - start + 1 < windowSize) {
+        if (start === 1) end = clamp(start + (windowSize - 1));
+        if (end === pages) start = clamp(end - (windowSize - 1));
+      }
+
+      el.pager.innerHTML = "";
+
+      const prev = document.createElement("button");
+      prev.className = "pagebtn";
+      prev.type = "button";
+      prev.textContent = "‹";
+      prev.disabled = current <= 1;
+      prev.addEventListener("click", () => { state.page = Math.max(1, current - 1); state.useLoadMore = false; render(); });
+      el.pager.appendChild(prev);
+
+      if (start > 1) {
+        const first = document.createElement("button");
+        first.className = "pagebtn";
+        first.type = "button";
+        first.textContent = "1";
+        first.addEventListener("click", () => { state.page = 1; state.useLoadMore = false; render(); });
+        el.pager.appendChild(first);
+
+        if (start > 2){
+          const dots = document.createElement("span");
+          dots.textContent = "…";
+          dots.style.color = "var(--muted)";
+          dots.style.padding = "0 6px";
+          el.pager.appendChild(dots);
+        }
+      }
+
+      for (let p = start; p <= end; p++){
+        const btn = document.createElement("button");
+        btn.className = "pagebtn";
+        btn.type = "button";
+        btn.textContent = String(p);
+        if (p === current) btn.setAttribute("aria-current", "page");
+        btn.addEventListener("click", () => { state.page = p; state.useLoadMore = false; render(); });
+        el.pager.appendChild(btn);
+      }
+
+      if (end < pages) {
+        if (end < pages - 1){
+          const dots = document.createElement("span");
+          dots.textContent = "…";
+          dots.style.color = "var(--muted)";
+          dots.style.padding = "0 6px";
+          el.pager.appendChild(dots);
+        }
+        const last = document.createElement("button");
+        last.className = "pagebtn";
+        last.type = "button";
+        last.textContent = String(pages);
+        last.addEventListener("click", () => { state.page = pages; state.useLoadMore = false; render(); });
+        el.pager.appendChild(last);
+      }
+
+      const next = document.createElement("button");
+      next.className = "pagebtn";
+      next.type = "button";
+      next.textContent = "›";
+      next.disabled = current >= pages;
+      next.addEventListener("click", () => { state.page = Math.min(pages, current + 1); state.useLoadMore = false; render(); });
+      el.pager.appendChild(next);
+    }
+
+    function syncAllUIFromState(){
+      syncChipPressed(el.chipsCategory, state.category);
+      syncChipPressed(el.chipsCategoryMobile, state.category);
+      syncChipPressed(el.chipsFeature, state.feature);
+      syncChipPressed(el.chipsFeatureMobile, state.feature);
+
+      el.minPrice.value = state.minPrice ?? "";
+      el.maxPrice.value = state.maxPrice ?? "";
+      el.inStockOnly.checked = state.inStockOnly;
+
+      el.minPriceMobile.value = state.minPrice ?? "";
+      el.maxPriceMobile.value = state.maxPrice ?? "";
+      el.inStockOnlyMobile.checked = state.inStockOnly;
+
+      el.sort.value = state.sort;
+    }
+
+    function render(){
+      const filtered = applyFilters(products);
+      const sorted = applySort(filtered);
+      const paged = getPaged(sorted);
+      const { total, pages, page, slice, rangeStart, rangeEnd } = paged;
+
+      el.totalCountText.textContent = `全 ${products.length} 件`;
+      el.resultCountText.textContent = `${total} 件`;
+      el.rangeText.textContent = `${total}件中 ${rangeStart}–${rangeEnd}件を表示`;
+
+      const isEmpty = total === 0;
+      el.empty.style.display = isEmpty ? "block" : "none";
+      el.grid.style.display = isEmpty ? "none" : "grid";
+
+      if (!isEmpty) renderGrid(slice);
+      renderActiveFilters();
+      renderPager(pages, page);
+
+      const canMore = state.useLoadMore ? (rangeEnd < total) : (page < pages);
+      el.loadMore.disabled = !canMore;
+      el.loadMore.textContent = state.useLoadMore
+        ? (rangeEnd < total ? "もっと見る" : "これ以上ありません")
+        : "もっと見る（ページ）";
+    }
+
+    // Events
+    let searchTimer = null;
+    el.search.addEventListener("input", () => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        state.q = el.search.value;
+        state.page = 1;
+        state.useLoadMore = true;
+        render();
+      }, 150);
+    });
+
+    el.sort.addEventListener("change", () => {
+      state.sort = el.sort.value;
+      state.page = 1;
+      state.useLoadMore = true;
+      render();
+    });
+
+    function bindPriceInputs(minEl, maxEl, stockEl){
+      const handler = () => {
+        state.minPrice = toNum(minEl.value);
+        state.maxPrice = toNum(maxEl.value);
+        state.inStockOnly = stockEl.checked;
+        state.page = 1;
+        state.useLoadMore = true;
+        render();
+      };
+      minEl.addEventListener("input", handler);
+      maxEl.addEventListener("input", handler);
+      stockEl.addEventListener("change", handler);
+    }
+    bindPriceInputs(el.minPrice, el.maxPrice, el.inStockOnly);
+
+    function bindChipContainer(container, setRef){
+      container.addEventListener("click", (e) => {
+        const t = e.target;
+        if (!(t instanceof HTMLElement)) return;
+        if (!t.classList.contains("chip")) return;
+        const value = t.textContent;
+        toggleSet(setRef, value);
+        state.page = 1;
+        state.useLoadMore = true;
+        syncAllUIFromState();
+        render();
+      });
+    }
+
+    function openDrawer(){
+      el.overlay.classList.add("open");
+      el.drawer.classList.add("open");
+      el.overlay.setAttribute("aria-hidden", "false");
+      syncAllUIFromState();
+    }
+    function closeDrawer(){
+      el.overlay.classList.remove("open");
+      el.drawer.classList.remove("open");
+      el.overlay.setAttribute("aria-hidden", "true");
+    }
+    el.openFilterBtn.addEventListener("click", openDrawer);
+    el.closeFilterBtn.addEventListener("click", closeDrawer);
+    el.overlay.addEventListener("click", closeDrawer);
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && el.drawer.classList.contains("open")) closeDrawer();
+    });
+
+    el.applyBtnMobile.addEventListener("click", () => {
+      state.minPrice = toNum(el.minPriceMobile.value);
+      state.maxPrice = toNum(el.maxPriceMobile.value);
+      state.inStockOnly = el.inStockOnlyMobile.checked;
+      state.page = 1;
+      state.useLoadMore = true;
+      closeDrawer();
+      syncAllUIFromState();
+      render();
+    });
+
+    function resetAll(){
+      state.q = "";
+      state.sort = "recommended";
+      state.category.clear();
+      state.feature.clear();
+      state.minPrice = null;
+      state.maxPrice = null;
+      state.inStockOnly = false;
+      state.page = 1;
+      state.useLoadMore = true;
+
+      el.search.value = "";
+      syncAllUIFromState();
+      render();
+    }
+    el.resetBtnDesktop.addEventListener("click", resetAll);
+    el.resetBtnMobile.addEventListener("click", resetAll);
+    el.resetBtnEmpty.addEventListener("click", resetAll);
+
+    el.loadMore.addEventListener("click", () => {
+      state.useLoadMore = true;
+      state.page += 1;
+      render();
+      el.loadMore.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+
+    // Add-to-cart
+    el.grid.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-add-id]");
+      if (!btn) return;
+      const id = Number(btn.getAttribute("data-add-id"));
+      const p = products.find(x => x.id === id);
+      if (!p) return;
+      if (!p.inStock) { toast("在庫がありません"); return; }
+      addToCart(p);
+    });
+
+    // Favorites (heart)
+    el.grid.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-fav-id]");
+      if (!btn) return;
+      const id = Number(btn.getAttribute("data-fav-id"));
+      toggleFav(id);
+      render();
+    });
+
+    // Init
+    renderChips(document.getElementById("chipsCategory"), CATEGORIES, state.category);
+    renderChips(document.getElementById("chipsCategoryMobile"), CATEGORIES, state.category);
+    renderChips(document.getElementById("chipsFeature"), FEATURES, state.feature);
+    renderChips(document.getElementById("chipsFeatureMobile"), FEATURES, state.feature);
+
+    bindChipContainer(document.getElementById("chipsCategory"), state.category);
+    bindChipContainer(document.getElementById("chipsCategoryMobile"), state.category);
+    bindChipContainer(document.getElementById("chipsFeature"), state.feature);
+    bindChipContainer(document.getElementById("chipsFeatureMobile"), state.feature);
+
+    syncAllUIFromState();
+    render();
+    updateCartBadge();
+
+    window.addEventListener("storage", () => {
+      updateCartBadge();
+      state.favorites = readFavs();
+      render();
+    });
+  </script>
+</body>
+</html>

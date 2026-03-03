@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>購入内容の確認 | Mawal</title>
+
+  <!-- Font (same as TOP) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#ffffff;
+      --text:#222222;
+      --muted:#666666;
+      --line:#e8e8e8;
+
+      /* TOPと同じトーン */
+      --beige:#f4efe8;
+      --footer:#1b1815;
+      --brown:#6b4f3b;
+      --brown2:#5a4030;
+
+      --shadow: 0 8px 24px rgba(0,0,0,.08);
+      --radius:16px;
+      --max:920px;
+    }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+      color:var(--text);
+      background:var(--bg);
+      line-height:1.7;
+    }
+    a{ color:inherit; text-decoration:none; }
+    button, input, select, textarea{ font:inherit; }
+    .container{
+      width:min(var(--max), calc(100% - 48px));
+      margin-inline:auto;
+    }
+
+    /* ===== Header (match TOP minimal) ===== */
+    header{
+      position:sticky;
+      top:0;
+      z-index:50;
+      background:rgba(255,255,255,.8);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid rgba(0,0,0,.06);
+    }
+    .header-inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 0;
+      gap:12px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      font-weight:600;
+      letter-spacing:0.08em;
+      white-space:nowrap;
+    }
+    .brand-text{
+      font-family:"Playfair Display", serif;
+      font-size:22px;
+      color:var(--brown);
+      text-transform:capitalize;
+    }
+    .brand:hover .brand-text{ opacity:.85; }
+
+    .back{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      color:var(--muted);
+      font-size:14px;
+      padding:8px 10px;
+      border-radius:10px;
+    }
+    .back:hover{ background:rgba(0,0,0,.04); color:var(--text); }
+
+    main{ padding:22px 0 70px; }
+
+    .title{
+      margin:10px 0 18px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    h1{
+      margin:0;
+      font-size:28px;
+      letter-spacing:.01em;
+      line-height:1.2;
+      font-family:"Playfair Display", serif;
+      font-weight:600;
+      color:var(--brown);
+    }
+    .small{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    /* ===== Step ===== */
+    .step{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color:var(--muted);
+      font-size:12px;
+      margin-bottom:18px;
+    }
+    .dot{
+      width:8px;height:8px;border-radius:999px;background:rgba(0,0,0,.22);
+    }
+    .dot.active{ background:var(--brown); }
+    .bar{
+      flex:1;
+      height:1px;
+      background:rgba(0,0,0,.12);
+    }
+
+    /* ===== Card ===== */
+    .card{
+      border:1px solid rgba(0,0,0,.10);
+      border-radius:0;
+      padding:16px;
+      background:var(--beige);
+    }
+    .card + .card{ margin-top:14px; }
+
+    .card h2{
+      margin:0 0 12px;
+      font-size:14px;
+      letter-spacing:.02em;
+    }
+
+    .kv{
+      display:grid;
+      gap:10px;
+      font-size:14px;
+    }
+    .kv-row{
+      display:grid;
+      grid-template-columns: 160px 1fr;
+      gap:12px;
+      padding:8px 0;
+      border-bottom:1px solid rgba(0,0,0,.08);
+    }
+    .kv-row:last-child{ border-bottom:none; }
+    .k{ color:var(--muted); }
+    .v{ color:var(--text); }
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:13px;
+    }
+
+    .summary{
+      display:grid;
+      gap:8px;
+      font-size:14px;
+    }
+    .sum-row{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      padding:6px 2px;
+    }
+    .sum-row .k{ color:var(--muted); }
+    .sum-row.total{
+      border-top:1px solid rgba(0,0,0,.12);
+      padding-top:12px;
+      margin-top:6px;
+      font-weight:900;
+      font-size:16px;
+    }
+    .note{
+      color:var(--muted);
+      font-size:12px;
+      margin:10px 2px 0;
+      line-height:1.6;
+    }
+
+    .actions{
+      margin-top:16px;
+      display:grid;
+      gap:10px;
+    }
+    .btn{
+      border:1px solid rgba(0,0,0,.12);
+      background:#fff;
+      color:var(--text);
+      border-radius:14px;
+      padding:12px 14px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      font-size:14px;
+      white-space:nowrap;
+    }
+    .btn:hover{ border-color: rgba(0,0,0,.20); box-shadow: 0 6px 18px rgba(0,0,0,.06); }
+    .btn.primary{
+      background:var(--brown);
+      border-color:var(--brown);
+      color:#fff;
+    }
+    .btn.primary:hover{ background:var(--brown2); border-color:var(--brown2); }
+    .btn.ghost{
+      background:transparent;
+      border-color: rgba(0,0,0,.14);
+    }
+
+    /* ===== Empty state ===== */
+    .empty{
+      border:1px dashed rgba(0,0,0,.22);
+      border-radius:0;
+      padding:18px;
+      color:var(--muted);
+      background: rgba(0,0,0,.02);
+      display:none;
+    }
+    .empty strong{ color:var(--text); }
+
+    /* Toast */
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:24px;
+      transform:translateX(-50%);
+      padding:12px 14px;
+      border-radius:14px;
+      background:rgba(17,17,17,.92);
+      color:#fff;
+      font-size:14px;
+      z-index:200;
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: 0 12px 40px rgba(0,0,0,.28);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .22s ease;
+    }
+    .toast.show{ opacity:1; }
+
+    /* Responsive */
+    @media (max-width: 720px){
+      .container{ width:min(var(--max), calc(100% - 32px)); }
+      h1{ font-size:24px; }
+      .kv-row{ grid-template-columns: 1fr; gap:6px; }
+      .k{ font-size:12px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <div class="header-inner">
+        <a class="brand" href="index.html" aria-label="Mawal トップへ">
+          <span class="brand-text">Mawal</span>
+        </a>
+
+        <a class="back" href="cash.html" aria-label="Back to checkout">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M15 18 9 12l6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          情報入力に戻る
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="title">
+        <h1>confirm</h1>
+        <p class="small">内容に問題がなければ「注文を確定する」を押してください。</p>
+      </div>
+
+      <div class="step" aria-label="Progress">
+        <span class="dot" aria-hidden="true"></span><span>情報入力</span>
+        <span class="bar" aria-hidden="true"></span>
+        <span class="dot active" aria-hidden="true"></span><span>確認</span>
+        <span class="bar" aria-hidden="true"></span>
+        <span class="dot" aria-hidden="true"></span><span>完了</span>
+      </div>
+
+      <div class="empty" id="emptyState">
+        <strong>確認する情報が見つかりませんでした。</strong><br>
+        先に購入手続きページで情報を入力してください。
+        <div style="margin-top:12px;">
+          <a class="btn" href="cash.html" role="button">購入手続きへ戻る</a>
+        </div>
+      </div>
+
+      <!-- Shipping info -->
+      <section class="card" id="contentWrap" aria-label="Confirm shipping info">
+        <h2>配送先情報</h2>
+        <div class="kv" id="kv"></div>
+      </section>
+
+      <!-- Payment -->
+      <section class="card" id="payWrap" aria-label="Confirm payment">
+        <h2>お支払い方法</h2>
+        <div class="kv">
+          <div class="kv-row">
+            <div class="k">方法</div>
+            <div class="v" id="payText">—</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Summary -->
+      <section class="card" id="sumWrap" aria-label="Confirm summary">
+        <h2>注文内容</h2>
+        <div class="summary">
+          <div class="sum-row">
+            <div class="k">商品小計</div>
+            <div class="v" id="subtotal">—</div>
+          </div>
+          <div class="sum-row">
+            <div class="k">送料</div>
+            <div class="v" id="shipping">—</div>
+          </div>
+          <div class="sum-row">
+            <div class="k">税</div>
+            <div class="v">Tax excluded</div>
+          </div>
+          <div class="sum-row total">
+            <div class="k" style="color:var(--text);">合計</div>
+            <div class="v" id="total">—</div>
+          </div>
+        </div>
+
+        <p class="note">
+          ・これはデモ用の確認ページです。<br>
+          ・「注文を確定する」を押すと完了ページへ進む想定にできます（次で作成可能）。
+        </p>
+
+        <div class="actions">
+          <button class="btn primary" id="confirmBtn" type="button">注文を確定する（ダミー）</button>
+          <a class="btn ghost" href="cash.html" role="button">修正する</a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <script>
+    const yen = (n) => "¥" + Number(n).toLocaleString("ja-JP");
+
+    const el = {
+      empty: document.getElementById("emptyState"),
+      contentWrap: document.getElementById("contentWrap"),
+      payWrap: document.getElementById("payWrap"),
+      sumWrap: document.getElementById("sumWrap"),
+      kv: document.getElementById("kv"),
+      payText: document.getElementById("payText"),
+      subtotal: document.getElementById("subtotal"),
+      shipping: document.getElementById("shipping"),
+      total: document.getElementById("total"),
+      confirmBtn: document.getElementById("confirmBtn"),
+      toast: document.getElementById("toast"),
+    };
+
+    function toast(msg){
+      el.toast.textContent = msg;
+      el.toast.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => el.toast.classList.remove("show"), 1400);
+    }
+
+    function payLabel(v){
+      if (v === "cod") return "代金引換";
+      return "クレジットカード";
+    }
+
+    function showEmpty(isEmpty){
+      el.empty.style.display = isEmpty ? "block" : "none";
+      el.contentWrap.style.display = isEmpty ? "none" : "block";
+      el.payWrap.style.display = isEmpty ? "none" : "block";
+      el.sumWrap.style.display = isEmpty ? "none" : "block";
+    }
+
+    function safeText(s){
+      return (s ?? "").toString().trim() || "—";
+    }
+
+    // Load payload from checkout page
+    let payload = null;
+    try{
+      payload = JSON.parse(localStorage.getItem("checkout_confirm") || "null");
+    }catch(e){ payload = null; }
+
+    if (!payload){
+      showEmpty(true);
+    }else{
+      showEmpty(false);
+
+      // Render KV
+      const rows = [
+        ["お名前", safeText(payload.name)],
+        ["メール", safeText(payload.email)],
+        ["郵便番号", `<span class="mono">${safeText(payload.postal)}</span>`],
+        ["電話番号", `<span class="mono">${safeText(payload.tel)}</span>`],
+        ["住所", safeText(payload.address)],
+        ["配送メモ", safeText(payload.note)],
+      ];
+
+      el.kv.innerHTML = rows.map(([k,v]) => `
+        <div class="kv-row">
+          <div class="k">${k}</div>
+          <div class="v">${v}</div>
+        </div>
+      `).join("");
+
+      // Payment
+      el.payText.textContent = payLabel(payload.pay);
+
+      // Totals
+      el.subtotal.textContent = yen(payload.subtotal);
+      el.shipping.textContent = yen(payload.shipping);
+      el.total.textContent = yen(payload.total);
+    }
+
+    // Confirm (dummy)
+    el.confirmBtn.addEventListener("click", () => {
+      if (!payload){
+        toast("先に情報入力を行ってください");
+        return;
+      }
+      toast("注文を確定しました（ダミー）");
+
+      // 完了ページへ遷移したい場合
+      // localStorage.setItem("checkout_complete", JSON.stringify({ ...payload, orderedAt: Date.now() }));
+      // window.location.href = "complete.html";
+    });
+  </script>
+</body>
+</html>
