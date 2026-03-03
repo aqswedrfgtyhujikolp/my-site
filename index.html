@@ -1,0 +1,814 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>EC Top (Design Comp)</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#ffffff;
+      --text:#222222;
+      --muted:#666666;
+      --line:#e8e8e8;
+      --accent:#1f6feb;
+      --shadow: 0 8px 24px rgba(0,0,0,.08);
+      --radius:16px;
+      --max:1120px;
+      --beige:#f4efe8;
+      --footer:#1b1815;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+      color:var(--text);
+      background:var(--bg);
+      line-height:1.6;
+    }
+    a{ color:inherit; text-decoration:none; }
+    img{ max-width:100%; display:block; }
+    .container{
+      width:min(var(--max), calc(100% - 48px));
+      margin-inline:auto;
+    }
+
+    /* ===== Header (minimal) ===== */
+    header{
+      position:sticky;
+      top:0;
+      z-index:50;
+      background:rgba(255,255,255,.8);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid rgba(0,0,0,.06);
+    }
+    .header-inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 0;
+    }
+    .brand{
+  display:flex;
+  align-items:center;
+  font-weight:600;
+  letter-spacing:0.08em;
+}
+
+/* ロゴ文字 */
+.brand-text{
+  font-family: "Playfair Display", serif; /* ファーストビューと統一 */
+  font-size:22px;               /* ← 今より大きく */
+  color:#6b4f3b;                /* CTAと揃えたブラウン */
+  text-transform:capitalize;
+}
+.brand:hover .brand-text{
+  opacity:.85;
+}
+    nav{
+      display:flex;
+      gap:16px;
+      align-items:center;
+      font-size:14px;
+      color:var(--muted);
+    }
+    nav a{ padding:8px 10px; border-radius:10px; }
+    nav a:hover{ background:rgba(0,0,0,.04); color:var(--text); }
+    .nav-cta{
+  color:#fff;
+  background:#6b4f3b;        /* モダンなブラウン */
+}
+
+.nav-cta:hover{
+  background:#5a4030;        /* 少し濃く */
+  color:#fff;
+}
+
+
+    /* ===== Hero (image only) ===== */
+    .hero{
+      height:100vh;
+      min-height:520px;
+      position:relative;
+      overflow:hidden;
+      background:#0b1220;
+    }
+    .hero::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(1200px 600px at 25% 20%, rgba(31,111,235,.28), transparent 60%),
+        radial-gradient(900px 500px at 80% 55%, rgba(0,210,180,.18), transparent 60%),
+        linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.45));
+      pointer-events:none;
+    }
+    .hero img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      transform:scale(1.02);
+      filter:saturate(1.05) contrast(1.05);
+    }
+
+    .scroll-hint{
+      position:absolute;
+      left:50%;
+      bottom:22px;
+      transform:translateX(-50%);
+      width:34px;height:54px;
+      border:1px solid rgba(255,255,255,.55);
+      border-radius:999px;
+      background:rgba(0,0,0,.12);
+      backdrop-filter: blur(8px);
+    }
+    .scroll-hint::after{
+      content:"";
+      position:absolute;
+      left:50%;
+      top:14px;
+      transform:translateX(-50%);
+      width:6px;height:6px;
+      border-radius:50%;
+      background:rgba(255,255,255,.9);
+      animation: scrollDot 1.4s infinite ease-in-out;
+    }
+    @keyframes scrollDot{
+      0%{ transform:translate(-50%,0); opacity:.9; }
+      70%{ transform:translate(-50%,16px); opacity:.2; }
+      100%{ transform:translate(-50%,16px); opacity:0; }
+    }
+
+/* ===== Hero slider ===== */
+.hero{
+  height:100vh;
+  min-height:520px;
+  position:relative;
+  overflow:hidden;
+  background:#0b1220;
+}
+
+/* 画像を重ねるコンテナ */
+.hero-slides{
+  position:absolute;
+  inset:0;
+}
+
+/* 各スライド */
+.hero-slide{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  transition: opacity 900ms ease;
+}
+
+.hero-slide.is-active{
+  opacity:1;
+}
+
+/* 画像を枠いっぱいに */
+.hero-slide img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transform:scale(1.02);
+  filter:saturate(1.05) contrast(1.05);
+}
+
+/* ドットUI */
+.hero-ui{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:22px;
+  display:flex;
+  justify-content:center;
+  pointer-events:none; /* スクロールヒントを邪魔しない */
+}
+
+.hero-dots{
+  display:flex;
+  gap:10px;
+  padding:10px 12px;
+  border-radius:999px;
+  background:rgba(0,0,0,.18);
+  border:1px solid rgba(255,255,255,.22);
+  backdrop-filter: blur(8px);
+  pointer-events:auto; /* ドットはクリック可能にする */
+}
+
+/* ドット */
+.hero-dot{
+  width:10px;
+  height:10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.65);
+  background:transparent;
+  cursor:pointer;
+  padding:0;
+}
+
+.hero-dot.is-active{
+  background:rgba(255,255,255,.92);
+}
+
+
+    /* ===== Sections ===== */
+    section{ padding:68px 0; }
+    .section-title{
+      font-size:26px;
+      margin:0 0 8px;
+      letter-spacing:.01em;
+    }
+    .section-sub{
+      margin:0 0 14px;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    /* ===== Recommended grid ===== */
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:18px;
+    }
+    .card{
+      border:1px solid rgba(0,0,0,.08);
+      border-radius:0;
+      overflow:hidden;
+      background:var(--beige);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .card:hover{
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+      border-color: rgba(31,111,235,.22);
+    }
+    .card-media{
+      aspect-ratio: 1 / 1;
+      background:linear-gradient(135deg, rgba(31,111,235,.12), rgba(0,210,180,.08));
+      position:relative;
+      overflow:hidden;
+    }
+    .tag{
+      position:absolute;
+      left:12px; top:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      background:rgba(255,255,255,.92);
+      border:1px solid rgba(0,0,0,.08);
+      z-index:2;
+    }
+    .card-body{
+      padding:14px 14px 16px;
+      background:rgba(255,255,255,.35);
+      backdrop-filter: blur(2px);
+    }
+    .name{
+      font-size:15px;
+      font-weight:600;
+      margin:0 0 6px;
+      display:-webkit-box;
+      -webkit-box-orient: vertical;
+      overflow:hidden;
+      min-height: 2.6em;
+    }
+    .price{
+      margin:0;
+      font-weight:700;
+      letter-spacing:.01em;
+    }
+    .meta{
+      margin-top:8px;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    /* ★ 画像の隙間をなくす：枠を完全に埋める */
+    .card-media img,
+    .mini-media img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    /* ===== Horizontal scroller（ボタンで動かすための設定） ===== */
+    .scroller{
+      display:flex;
+      gap:14px;
+      overflow:hidden;
+      padding:10px 2px 14px;
+      scroll-behavior:smooth;
+    }
+    .scroller::-webkit-scrollbar{ height:0; }
+    .scroller{ scrollbar-width:none; }
+    .scroller{ -ms-overflow-style:none; }
+
+    .mini-card{
+      scroll-snap-align: start;
+      border:1px solid rgba(0,0,0,.08);
+      border-radius:0;
+      overflow:hidden;
+      background:var(--beige);
+      transition: box-shadow .18s ease, transform .18s ease;
+      width:100%;
+    }
+    .mini-card:hover{ transform:translateY(-2px); box-shadow: var(--shadow); }
+    .mini-media{
+      aspect-ratio: 4 / 3;
+      background:linear-gradient(135deg, rgba(31,111,235,.10), rgba(0,210,180,.06));
+      overflow:hidden;
+    }
+    .mini-body{
+      padding:12px 12px 14px;
+      background:rgba(255,255,255,.35);
+      backdrop-filter: blur(2px);
+    }
+    .mini-name{ margin:0 0 4px; font-weight:600; font-size:14px; }
+    .mini-price{ margin:0; font-weight:700; font-size:14px; }
+
+    /* ===== リンクの見た目を崩さない ===== */
+    .card-link,
+    .mini-link{
+      display:block;
+      color:inherit;
+      text-decoration:none;
+      border-radius:0;
+    }
+
+    /* ===== パネルを大きくする（3〜4枚が目安） ===== */
+    #lineupScroller .mini-link{
+      flex: 0 0 280px;
+    }
+    @media (max-width: 900px){
+      #lineupScroller .mini-link{ flex-basis: 320px; }
+    }
+    @media (max-width: 560px){
+      .container{ width:min(var(--max), calc(100% - 32px)); }
+      .grid{ grid-template-columns: 1fr; }
+      nav a{ display:none; }
+      nav a.nav-cta{ display:inline-block; }
+      section{ padding:54px 0; }
+      .section-title{ font-size:22px; }
+      .about-title{ font-size:24px; }
+      #lineupScroller .mini-link{ flex-basis: 80%; }
+      .footer-grid{ grid-template-columns: 1fr; }
+    }
+
+    /* ===== About ===== */
+    .about{
+      border-top:1px solid var(--line);
+      border-bottom:1px solid var(--line);
+      background: var(--beige);
+    }
+    .about-inner{
+      display:grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap:34px;
+      align-items:start;
+    }
+    .about-title{
+      font-size:30px;
+      margin:0 0 18px;
+      letter-spacing:.01em;
+    }
+    .about p{
+      margin:0 0 12px;
+      color:#2a2a2a;
+      font-size:15px;
+    }
+    .notes{
+      margin-top:26px;
+      padding-top:18px;
+      border-top:1px dashed rgba(0,0,0,.18);
+      color:var(--muted);
+      font-size:12px;
+    }
+    .about-figure{
+      border-radius:0;
+      overflow:hidden;
+      background:#0b1220;
+    }
+    .about-figure img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      min-height: 360px;
+    }
+
+    /* ===== Footer ===== */
+    footer{
+      background:var(--footer);
+      color:#fff;
+      padding:44px 0;
+    }
+    .footer-grid{
+      display:grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap:26px;
+      align-items:start;
+    }
+    .footer-title{
+      margin:0 0 10px;
+      font-weight:700;
+      letter-spacing:.02em;
+    }
+    .footer-links{
+      display:grid;
+      gap:10px;
+      font-size:14px;
+      color:rgba(255,255,255,.78);
+    }
+    .footer-links a:hover{ color:#fff; }
+    .footer-bottom{
+      margin-top:26px;
+      padding-top:18px;
+      border-top:1px solid rgba(255,255,255,.12);
+      color:rgba(255,255,255,.6);
+      font-size:12px;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .sns{
+      display:flex; gap:10px;
+    }
+    .sns a{
+      width:34px;height:34px;border-radius:12px;
+      display:grid;place-items:center;
+      border:1px solid rgba(255,255,255,.16);
+      color:rgba(255,255,255,.9);
+    }
+    .sns a:hover{ border-color:rgba(255,255,255,.35); }
+
+    @media (max-width: 900px){
+      .grid{ grid-template-columns: repeat(2, 1fr); }
+      .about-inner{ grid-template-columns: 1fr; }
+      .about-figure img{ min-height: 280px; }
+      nav{ gap:10px; }
+    }
+
+    /* ===== Buttons ===== */
+    .lineup-head{
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      margin:10px 0 6px;
+    }
+    .slide-btn{
+      width:40px;
+      height:40px;
+      border-radius:14px;
+      border:1px solid rgba(0,0,0,.12);
+      background:#fff;
+      box-shadow: 0 6px 16px rgba(0,0,0,.08);
+      cursor:pointer;
+      font-size:22px;
+      line-height:1;
+    }
+    .slide-btn:active{
+      transform: translateY(1px);
+    }
+
+    /* ===== Hero center title ===== */
+.hero-center{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:5; /* 画像より上 */
+  pointer-events:none; /* クリック邪魔しない */
+}
+
+.hero-title{
+  margin:0;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(48px, 8vw, 96px);
+  font-weight:600;
+  letter-spacing:0.06em;
+  color:#fff;
+  text-align:center;
+  line-height:1;
+
+  text-shadow:
+    0 12px 32px rgba(0,0,0,.45),
+    0 2px 6px rgba(0,0,0,.35);
+}
+
+.hero-title{
+  color:rgba(255,255,255,.9);
+}
+
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <div class="header-inner">
+        <a class="brand" href="#">
+  <span class="brand-text">Mawal</span>
+</a>
+
+        <nav aria-label="Primary">
+          <a href="#recommended">おすすめ</a>
+          <a href="#lineup">商品</a>
+          <a href="#about">概要</a>
+          <a class="nav-cta" href="#recommended">商品を見る</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+<section class="hero" aria-label="Main visual">
+  <div class="hero-slides" id="heroSlides" aria-hidden="true"></div>
+
+    <!-- ★ 追加：中央テキスト -->
+  <div class="hero-center">
+    <h1 class="hero-title">Mawal</h1>
+  </div>
+  <div class="hero-ui">
+    <div class="hero-dots" id="heroDots" aria-label="スライド切り替え"></div>
+  </div>
+
+</section>
+
+
+    <!-- Recommended -->
+    <section id="recommended">
+      <div class="container">
+        <h2 class="section-title">recommendation</h2>
+        <p class="section-sub">おすすめ商品をご紹介します。</p>
+        <div class="grid" id="recommendedGrid" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- Horizontal lineup -->
+    <section id="lineup" style="padding-top:0;">
+      <div class="container">
+        <h2 class="section-title" style="margin-bottom:12px;">merchandise</h2>
+        <p class="section-sub">横スクロールでラインナップを表示（ダミーデータ生成）</p>
+
+        <div class="lineup-head">
+          <button class="slide-btn" id="lineupPrev" type="button" aria-label="前へ">‹</button>
+          <button class="slide-btn" id="lineupNext" type="button" aria-label="次へ">›</button>
+        </div>
+
+        <div class="scroller" id="lineupScroller" aria-label="Product lineup scroller"></div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="about">
+      <div class="container">
+        <div class="about-inner">
+          <div>
+            <h2 class="about-title">Mawal<br>木の器について</h2>
+            <p>
+              木製食器は、木がもつやさしい手ざわりと軽さ、そして口あたりの良さが魅力です。
+  熱が伝わりにくいため、温かいスープや飲み物も持ちやすく、毎日の食卓で活躍します。
+            </p>
+            <p>
+              Mawalでは、木目の美しさを生かしながら、汚れや水分が染みにくいよう表面をていねいに仕上げています。
+  あわせて、お手入れ用の「みつろう（※2）」もご用意。使うほどに艶が増し、味わい深く育っていくのが木の器の楽しみです。
+            </p>
+
+            <div class="notes">
+              <div>※1：天然素材のため、木目や色味に個体差があります。</div>
+              <div>※2：食器用の天然由来ワックス。乾燥が気になるときに薄く塗り、布で磨くと艶が戻ります。</div>
+            </div>
+          </div>
+
+          <figure class="about-figure" aria-label="Material image">
+            <img src="images/item.png" alt=""/>
+          </figure>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-title">Mawal</div>
+          <div style="color:rgba(255,255,255,.72);font-size:14px;max-width:38ch;">
+            素材の価値を、日常へ。製品とリサイクルをつなぐEC体験を目指します。
+          </div>
+          <div class="sns" style="margin-top:14px;">
+            <a href="#" aria-label="X">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </a>
+            <a href="#" aria-label="Instagram">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="6" y="6" width="12" height="12" rx="3" stroke="currentColor" stroke-width="2"/>
+                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                <circle cx="16.5" cy="7.5" r="1" fill="currentColor"/>
+              </svg>
+            </a>
+            <a href="#" aria-label="YouTube">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M21 12s0-3.3-.4-4.7c-.2-.8-.9-1.5-1.7-1.7C17.5 5.2 12 5.2 12 5.2s-5.5 0-6.9.4c-.8.2-1.5.9-1.7 1.7C3 8.7 3 12 3 12s0 3.3.4 4.7c.2.8.9 1.5 1.7 1.7 1.4.4 6.9.4 6.9.4s5.5 0 6.9-.4c.8-.2 1.5.9 1.7 1.7.4 1.4.4 4.7.4 4.7Z" stroke="currentColor" stroke-width="2"/>
+                <path d="M10 15V9l5 3-5 3Z" fill="currentColor"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <div class="footer-title">メニュー</div>
+          <div class="footer-links">
+            <a href="#recommended">おすすめ商品</a>
+            <a href="#lineup">商品一覧</a>
+            <a href="#about">商品概要</a>
+            <a href="#">お問い合わせ</a>
+          </div>
+        </div>
+
+        <div>
+          <div class="footer-title">ガイド</div>
+          <div class="footer-links">
+            <a href="#">ご利用ガイド</a>
+            <a href="#">会社情報</a>
+            <a href="#">利用規約</a>
+            <a href="#">プライバシーポリシー</a>
+            <a href="#">特定商取引法に基づく表記</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© <span id="year"></span> Mawal Inc.</div>
+        <div style="color:rgba(255,255,255,.55);">Design Comp / Dummy Data</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ===== Helpers =====
+    const yen = (n) => "¥" + n.toLocaleString("ja-JP");
+
+    // ===== Section: Recommended products =====
+    const recommended = [
+  { name: "香りをたのしむ 木のカップ", price: 3800, tag: "NEW", img: "images/Image_fx (1).png" },
+  { name: "口あたりやさしい 木のフォーク", price: 2200, tag: "人気", img: "images/Image_fx (2).png" },
+  { name: "すっとつかめる 八角箸", price: 2200, tag: "おすすめ", img: "images/Image_fx (3).png" },
+];
+
+    const recommendedGrid = document.getElementById("recommendedGrid");
+    recommendedGrid.innerHTML = recommended.map(p => `
+      <a class="card-link" href="products.html" aria-label="${p.name} の商品ページへ">
+        <article class="card">
+          <div class="card-media">
+            <img src="${p.img}" alt="${p.name}">
+            <div class="tag">${p.tag}</div>
+          </div>
+          <div class="card-body">
+            <h3 class="name">${p.name}</h3>
+            <p class="price">${yen(p.price)}</p>
+            <div class="meta">素材：天然木</div>
+          </div>
+        </article>
+      </a>
+    `).join("");
+
+    // ===== Section: Horizontal lineup =====
+    const lineupItems = [
+  { name: "香りをたのしむ 木のカップ",           price: 3800, img: "images/Image_fx (1).png" }, // コップ
+  { name: "口あたりやさしい 木のフォーク",       price: 2200, img: "images/Image_fx (2).png" }, // フォーク
+  { name: "すっとつかめる 八角箸",               price: 2200, img: "images/Image_fx (3).png" }, // 箸
+  { name: "食卓になじむ 木のおぼん",             price: 6800, img: "images/Image_fx (4).png" }, // おぼん
+  { name: "つや出し みつろうジャム",             price: 1800, img: "images/Image_fx (5).png" }, // 蜜蝋
+  { name: "木肌まろやか お椀",                   price: 4800, img: "images/Image_fx.png" },     // お椀
+  { name: "森のうるしコート プレート",           price: 3800, img: "images/Image_fx (7).png" }, // プレート（小）
+  { name: "森の手になじむ 木のスプーン",         price: 2200, img: "images/Image_fx(8).png" },  // スプーン
+];
+
+    const lineupScroller = document.getElementById("lineupScroller");
+    lineupScroller.innerHTML = lineupItems.map((p) => `
+      <a class="mini-link" href="products.html" aria-label="${p.name} の商品ページへ">
+        <article class="mini-card" role="group" aria-label="${p.name}">
+          <div class="mini-media">
+            <img src="${p.img}" alt="${p.name}">
+          </div>
+          <div class="mini-body">
+            <h3 class="mini-name">${p.name}</h3>
+            <p class="mini-price">${yen(p.price)}</p>
+          </div>
+        </article>
+      </a>
+    `).join("");
+
+    // ===== Lineup: button slide =====
+    const prevBtn = document.getElementById("lineupPrev");
+    const nextBtn = document.getElementById("lineupNext");
+    const GAP = 14;
+
+    function getStep() {
+      const item = lineupScroller.querySelector(".mini-link");
+      if (!item) return 280 + GAP;
+      return item.getBoundingClientRect().width + GAP;
+    }
+
+    prevBtn.addEventListener("click", () => {
+      lineupScroller.scrollBy({ left: -getStep(), behavior: "smooth" });
+    });
+
+    nextBtn.addEventListener("click", () => {
+      lineupScroller.scrollBy({ left: getStep(), behavior: "smooth" });
+    });
+
+// ===== Hero slider =====
+const heroImages = [
+  "images/fv_01.png",
+  "images/fv_02.png",
+  "images/fv_03.png",
+];
+
+const heroSlidesEl = document.getElementById("heroSlides");
+const heroDotsEl = document.getElementById("heroDots");
+
+let heroIndex = 0;
+let heroTimer = null;
+const HERO_INTERVAL = 4500; // 4.5秒ごと
+
+// スライド生成
+heroSlidesEl.innerHTML = heroImages.map((src, i) => `
+  <div class="hero-slide ${i === 0 ? "is-active" : ""}">
+    <img src="${src}" alt="">
+  </div>
+`).join("");
+
+// ドット生成
+heroDotsEl.innerHTML = heroImages.map((_, i) => `
+  <button class="hero-dot ${i === 0 ? "is-active" : ""}" type="button" aria-label="スライド ${i+1}"></button>
+`).join("");
+
+const heroSlideEls = Array.from(heroSlidesEl.querySelectorAll(".hero-slide"));
+const heroDotEls = Array.from(heroDotsEl.querySelectorAll(".hero-dot"));
+
+function showHeroSlide(nextIndex){
+  heroIndex = (nextIndex + heroImages.length) % heroImages.length;
+
+  heroSlideEls.forEach((el, i) => el.classList.toggle("is-active", i === heroIndex));
+  heroDotEls.forEach((el, i) => el.classList.toggle("is-active", i === heroIndex));
+}
+
+function startHero(){
+  stopHero();
+  heroTimer = setInterval(() => showHeroSlide(heroIndex + 1), HERO_INTERVAL);
+}
+
+function stopHero(){
+  if (heroTimer) clearInterval(heroTimer);
+  heroTimer = null;
+}
+
+// ドットクリック
+heroDotEls.forEach((btn, i) => {
+  btn.addEventListener("click", () => {
+    showHeroSlide(i);
+    startHero(); // 操作後にタイマーをリセット
+  });
+});
+
+// タブ非表示のとき止める（無駄な負荷を避ける）
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) stopHero();
+  else startHero();
+});
+
+startHero();
+
+
+    // ===== Footer year =====
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // ===== Optional: smooth scrolling for internal links =====
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener("click", (e) => {
+        const id = a.getAttribute("href");
+        const el = document.querySelector(id);
+        if (!el) return;
+        e.preventDefault();
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>購入手続き | Mawal</title>
+
+  <!-- Font (same as TOP) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#ffffff;
+      --text:#222222;
+      --muted:#666666;
+      --line:#e8e8e8;
+
+      /* TOPと同じトーン */
+      --beige:#f4efe8;
+      --footer:#1b1815;
+      --brown:#6b4f3b;
+      --brown2:#5a4030;
+
+      --shadow: 0 8px 24px rgba(0,0,0,.08);
+      --radius:16px;
+      --max:920px;
+    }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+      color:var(--text);
+      background:var(--bg);
+      line-height:1.7;
+    }
+    a{ color:inherit; text-decoration:none; }
+    button, input, select, textarea{ font:inherit; }
+    .container{
+      width:min(var(--max), calc(100% - 48px));
+      margin-inline:auto;
+    }
+
+    /* ===== Header (match TOP minimal) ===== */
+    header{
+      position:sticky;
+      top:0;
+      z-index:50;
+      background:rgba(255,255,255,.8);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid rgba(0,0,0,.06);
+    }
+    .header-inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 0;
+      gap:12px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      font-weight:600;
+      letter-spacing:0.08em;
+      white-space:nowrap;
+    }
+    .brand-text{
+      font-family:"Playfair Display", serif;
+      font-size:22px;
+      color:var(--brown);
+      text-transform:capitalize;
+    }
+    .brand:hover .brand-text{ opacity:.85; }
+
+    .back{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      color:var(--muted);
+      font-size:14px;
+      padding:8px 10px;
+      border-radius:10px;
+    }
+    .back:hover{ background:rgba(0,0,0,.04); color:var(--text); }
+
+    main{ padding:22px 0 70px; }
+
+    .title{
+      margin:10px 0 18px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    h1{
+      margin:0;
+      font-size:28px;
+      letter-spacing:.01em;
+      line-height:1.2;
+      font-family:"Playfair Display", serif;
+      font-weight:600;
+      color:var(--brown);
+    }
+    .small{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    /* ===== Step ===== */
+    .step{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color:var(--muted);
+      font-size:12px;
+      margin-bottom:18px;
+    }
+    .dot{
+      width:8px;height:8px;border-radius:999px;background:rgba(0,0,0,.22);
+    }
+    .dot.active{ background:var(--brown); }
+    .bar{
+      flex:1;
+      height:1px;
+      background:rgba(0,0,0,.12);
+    }
+
+    /* ===== Card ===== */
+    .card{
+      border:1px solid rgba(0,0,0,.10);
+      border-radius:0;
+      padding:16px;
+      background:var(--beige);
+    }
+    .card + .card{ margin-top:14px; }
+
+    .card h2{
+      margin:0 0 12px;
+      font-size:14px;
+      letter-spacing:.02em;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    .field label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin:0 0 6px;
+    }
+    .field input, .field select, .field textarea{
+      width:100%;
+      padding:10px 12px;
+      border:1px solid rgba(0,0,0,.12);
+      border-radius:14px;
+      outline:none;
+      background:#fff;
+      font-size:14px;
+    }
+    .field textarea{ min-height:96px; resize:vertical; }
+    .field input:focus, .field select:focus, .field textarea:focus{
+      border-color: rgba(107,79,59,.45);
+      box-shadow: 0 0 0 4px rgba(107,79,59,.10);
+    }
+
+    .radio-row{
+      display:grid;
+      gap:10px;
+    }
+    .radio{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:12px;
+      border:1px solid rgba(0,0,0,.10);
+      border-radius:16px;
+      cursor:pointer;
+      user-select:none;
+      background:rgba(255,255,255,.35);
+      backdrop-filter: blur(2px);
+    }
+    .radio:hover{ border-color: rgba(0,0,0,.18); }
+    .radio input{ margin-top:3px; accent-color: var(--brown); }
+    .radio strong{ font-size:14px; }
+    .radio .sub{ font-size:12px; color:var(--muted); margin-top:2px; }
+
+    .summary{
+      display:grid;
+      gap:8px;
+      font-size:14px;
+    }
+    .sum-row{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      padding:6px 2px;
+    }
+    .sum-row .k{ color:var(--muted); }
+    .sum-row.total{
+      border-top:1px solid rgba(0,0,0,.12);
+      padding-top:12px;
+      margin-top:6px;
+      font-weight:900;
+      font-size:16px;
+    }
+    .note{
+      color:var(--muted);
+      font-size:12px;
+      margin:10px 2px 0;
+      line-height:1.6;
+    }
+
+    .actions{
+      margin-top:16px;
+      display:grid;
+      gap:10px;
+    }
+    .btn{
+      border:1px solid rgba(0,0,0,.12);
+      background:#fff;
+      color:var(--text);
+      border-radius:14px;
+      padding:12px 14px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      font-size:14px;
+      white-space:nowrap;
+    }
+    .btn:hover{ border-color: rgba(0,0,0,.20); box-shadow: 0 6px 18px rgba(0,0,0,.06); }
+    .btn.primary{
+      background:var(--brown);
+      border-color:var(--brown);
+      color:#fff;
+    }
+    .btn.primary:hover{ background:var(--brown2); border-color:var(--brown2); }
+    .btn.ghost{
+      background:transparent;
+      border-color: rgba(0,0,0,.14);
+    }
+
+    /* Toast */
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:24px;
+      transform:translateX(-50%);
+      padding:12px 14px;
+      border-radius:14px;
+      background:rgba(17,17,17,.92);
+      color:#fff;
+      font-size:14px;
+      z-index:200;
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: 0 12px 40px rgba(0,0,0,.28);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .22s ease;
+    }
+    .toast.show{ opacity:1; }
+
+    /* Responsive */
+    @media (max-width: 720px){
+      .container{ width:min(var(--max), calc(100% - 32px)); }
+      .grid{ grid-template-columns: 1fr; }
+      h1{ font-size:24px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <div class="header-inner">
+        <a class="brand" href="index.html" aria-label="Mawal トップへ">
+          <span class="brand-text">Mawal</span>
+        </a>
+
+        <a class="back" href="cart.html" aria-label="Back to cart">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M15 18 9 12l6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          カートに戻る
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="title">
+        <h1>checkout</h1>
+        <p class="small">送料は入力内容に応じて計算されます（ダミー）。</p>
+      </div>
+
+      <div class="step" aria-label="Progress">
+        <span class="dot active" aria-hidden="true"></span><span>情報入力</span>
+        <span class="bar" aria-hidden="true"></span>
+        <span class="dot" aria-hidden="true"></span><span>確認</span>
+        <span class="bar" aria-hidden="true"></span>
+        <span class="dot" aria-hidden="true"></span><span>完了</span>
+      </div>
+
+      <!-- Contact + Shipping -->
+      <section class="card" aria-label="Shipping information">
+        <h2>配送先情報</h2>
+        <div class="grid">
+          <div class="field">
+            <label for="name">お名前</label>
+            <input id="name" type="text" placeholder="例：山田 太郎" />
+          </div>
+          <div class="field">
+            <label for="email">メールアドレス</label>
+            <input id="email" type="email" placeholder="example@mail.com" />
+          </div>
+
+          <div class="field">
+            <label for="postal">郵便番号</label>
+            <input id="postal" name="postal" type="text" inputmode="numeric" placeholder="例：1234567" />
+          </div>
+          <div class="field">
+            <label for="tel">電話番号</label>
+            <input id="tel" type="tel" inputmode="tel" placeholder="例：09012345678" />
+          </div>
+
+          <div class="field" style="grid-column: 1 / -1;">
+            <label for="address">住所</label>
+            <input id="address" name="address" type="text" placeholder="例：東京都千代田区1-2-3" />
+          </div>
+
+          <div class="field" style="grid-column: 1 / -1;">
+            <label for="note">配送メモ（任意）</label>
+            <textarea id="note" placeholder="置き配希望など"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- Payment -->
+      <section class="card" aria-label="Payment method">
+        <h2>お支払い方法</h2>
+        <div class="radio-row" id="payGroup">
+          <label class="radio">
+            <input type="radio" name="pay" value="card" checked />
+            <div>
+              <strong>クレジットカード</strong>
+              <div class="sub">VISA / Master / JCB など（ダミー）</div>
+            </div>
+          </label>
+          <label class="radio">
+            <input type="radio" name="pay" value="cod" />
+            <div>
+              <strong>代金引換</strong>
+              <div class="sub">到着時に現金でお支払い（ダミー）</div>
+            </div>
+          </label>
+        </div>
+      </section>
+
+      <!-- Order summary -->
+      <section class="card" aria-label="Order summary">
+        <h2>注文内容</h2>
+        <div class="summary">
+          <div class="sum-row">
+            <div class="k">商品小計</div>
+            <div class="v" id="subtotal">—</div>
+          </div>
+          <div class="sum-row">
+            <div class="k">送料</div>
+            <div class="v" id="shipping">—</div>
+          </div>
+          <div class="sum-row">
+            <div class="k">税</div>
+            <div class="v">Tax excluded</div>
+          </div>
+          <div class="sum-row total">
+            <div class="k" style="color:var(--text);">合計</div>
+            <div class="v" id="total">—</div>
+          </div>
+        </div>
+
+        <p class="note">
+          ・これはデモ用の購入手続きページです。<br>
+          ・入力内容に応じて送料が変化する想定の表示をしています。
+        </p>
+
+        <div class="actions">
+          <button class="btn primary" id="nextBtn" type="button">確認へ進む</button>
+          <button class="btn ghost" id="saveBtn" type="button">入力内容を保存（ダミー）</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <script src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"></script>
+
+
+  <script>
+    // ===== Helpers =====
+    const yen = (n) => "¥" + n.toLocaleString("ja-JP");
+    const CART_KEY = "mawal_cart_v1"; // products/cart と同じ
+
+    // cart から小計を計算（ダミー固定をやめて実データ連動）
+    function readCart(){
+      try{
+        const raw = localStorage.getItem(CART_KEY);
+        const arr = raw ? JSON.parse(raw) : [];
+        return Array.isArray(arr) ? arr : [];
+      }catch{
+        return [];
+      }
+    }
+    function computeSubtotal(cart){
+      return cart.reduce((sum, it) => sum + (Number(it.unitPrice)||0) * (Number(it.qty)||0), 0);
+    }
+
+    const el = {
+      name: document.getElementById("name"),
+      email: document.getElementById("email"),
+      postal: document.getElementById("postal"),
+      tel: document.getElementById("tel"),
+      address: document.getElementById("address"),
+      note: document.getElementById("note"),
+
+      subtotal: document.getElementById("subtotal"),
+      shipping: document.getElementById("shipping"),
+      total: document.getElementById("total"),
+
+      nextBtn: document.getElementById("nextBtn"),
+      saveBtn: document.getElementById("saveBtn"),
+      toast: document.getElementById("toast"),
+    };
+
+    function toast(msg){
+      el.toast.textContent = msg;
+      el.toast.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => el.toast.classList.remove("show"), 1400);
+    }
+
+    // Shipping rule (simple demo):
+    // - postal filled (>=7 digits): 600
+    // - address filled: 800
+    // - both filled: 600
+    // - none: null
+    function calcShipping(){
+      const hasPostal = String(el.postal.value || "").replace(/[^\d]/g, "").length >= 7;
+      const hasAddr = (el.address.value || "").trim().length >= 6;
+
+      if (!hasPostal && !hasAddr) return null;
+      if (hasPostal) return 600;
+      return 800;
+    }
+
+// ===== Postal -> Address (Auto) =====
+function normalizeZip(v){
+  return String(v || "").replace(/[^\d]/g, "").slice(0, 7); // 数字だけ・7桁まで
+}
+
+el.postal.addEventListener("input", () => {
+  // 入力中に 123-4567 みたいにしてもOKにする
+  const z = normalizeZip(el.postal.value);
+  el.postal.value = z;
+
+  // 7桁になったら住所を自動入力
+  if (z.length === 7) {
+    // AjaxZip3: zip2addr(郵便番号要素, 都道府県, 市区町村, 町域/以降…)
+    // 今回は address 1本なので「都道府県+市区町村+町域」が address に入る形にする
+    AjaxZip3.zip2addr(el.postal, '', 'address', 'address');
+
+    // 住所が入るまで少し待ってから、番地入力を促す（任意）
+    setTimeout(() => {
+      if ((el.address.value || "").trim().length > 0) {
+        toast("住所を自動入力しました。番地以降を入力してください");
+        el.address.focus();
+      }
+    }, 200);
+  }
+});
+
+
+    function renderTotals(){
+      const cart = readCart();
+      const cartSubtotal = computeSubtotal(cart);
+      const ship = calcShipping();
+
+      el.subtotal.textContent = yen(cartSubtotal);
+      el.shipping.textContent = ship === null ? "未確定" : yen(ship);
+      el.total.textContent = ship === null ? "—" : yen(cartSubtotal + ship);
+
+      // カートが空の時の案内
+      if (!cart.length){
+        toast("カートが空です（商品を追加してください）");
+      }
+    }
+
+    // Re-render on input
+    ["input","change"].forEach(evt => {
+      [el.postal, el.address].forEach(x => x.addEventListener(evt, renderTotals));
+    });
+
+    // Save (dummy)
+    el.saveBtn.addEventListener("click", () => {
+      const payload = {
+        name: el.name.value.trim(),
+        email: el.email.value.trim(),
+        postal: el.postal.value.trim(),
+        tel: el.tel.value.trim(),
+        address: el.address.value.trim(),
+        note: el.note.value.trim(),
+        pay: document.querySelector('input[name="pay"]:checked')?.value || "card"
+      };
+      localStorage.setItem("checkout_demo", JSON.stringify(payload));
+      toast("入力内容を保存しました（ダミー）");
+    });
+
+    // Next (validate minimal fields) -> confirm.html
+    el.nextBtn.addEventListener("click", () => {
+      const cart = readCart();
+      const cartSubtotal = computeSubtotal(cart);
+
+      if (!cart.length){
+        toast("カートが空です。商品を追加してください");
+        return;
+      }
+
+      const nameOk = el.name.value.trim().length >= 2;
+      const emailOk = el.email.value.includes("@");
+      const addrOk = el.address.value.trim().length >= 6;
+
+      if (!nameOk || !emailOk || !addrOk){
+        toast("お名前・メール・住所を入力してください");
+        return;
+      }
+
+      const ship = calcShipping();
+      if (ship === null){
+        toast("郵便番号または住所を入力して送料を確定してください");
+        return;
+      }
+
+      const payload = {
+        name: el.name.value.trim(),
+        email: el.email.value.trim(),
+        postal: el.postal.value.trim(),
+        tel: el.tel.value.trim(),
+        address: el.address.value.trim(),
+        note: el.note.value.trim(),
+        pay: document.querySelector('input[name="pay"]:checked')?.value || "card",
+        subtotal: cartSubtotal,
+        shipping: ship,
+        total: cartSubtotal + ship,
+        items: cart
+      };
+      localStorage.setItem("checkout_confirm", JSON.stringify(payload));
+      window.location.href = "confirm.html";
+    });
+
+    // Load saved (optional)
+    try{
+      const saved = JSON.parse(localStorage.getItem("checkout_demo") || "null");
+      if (saved){
+        el.name.value = saved.name || "";
+        el.email.value = saved.email || "";
+        el.postal.value = saved.postal || "";
+        el.tel.value = saved.tel || "";
+        el.address.value = saved.address || "";
+        el.note.value = saved.note || "";
+        const pay = document.querySelector(`input[name="pay"][value="${saved.pay}"]`);
+        if (pay) pay.checked = true;
+      }
+    }catch(e){}
+
+    renderTotals();
+
+    // 他タブでカートが変わったら再計算
+    window.addEventListener("storage", (e) => {
+      if (e.key === CART_KEY) renderTotals();
+    });
+
+    AjaxZip3.zip2addr('postal', '', 'address', 'address');
+
+  </script>
+</body>
+</html>
